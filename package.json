@@ -1,0 +1,28 @@
+{
+  "name": "result-api",
+  "version": "1.0.0",
+  "description": "result procession system api",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "oracle",
+    "node-js",
+    "express",
+    "oracle-db"
+  ],
+  "author": "ifat, antor, swadhin",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.6.1",
+    "bcrypt": "^3.0.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "fs-extra": "^7.0.0",
+    "generate-password": "^1.4.0",
+    "jsonwebtoken": "^8.3.0",
+    "nodemon": "^1.18.3",
+    "oracledb": "^2.3.0"
+  }
+}
