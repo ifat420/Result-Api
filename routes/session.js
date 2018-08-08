@@ -2,7 +2,7 @@
 const express = require('express');
 const oracledb = require('oracledb');
 const dbConfig = require('../dbConnection/dbconfig.js');
-
+const auth = require('../middleware/auth');
 const router = express.Router();
 
 
@@ -10,8 +10,12 @@ oracledb.autoCommit = true;
 
 
 //insert into faculty
-router.post('/insert/session', function(req, res, next){
-  
+router.post('/insert/session', auth, function(req, res, next){
+  if(req.body.user.type !== 'grand'){
+		return res.status(401).send({
+			message: 'Permission Unauthorized'
+		})
+	}
   oracledb.getConnection(
     dbConfig,
     function (err, connection) {
@@ -76,7 +80,12 @@ router.get('/get/session', function(req, res, next){
 //update faculty
 
 //insert into faculty
-router.put('/update/session/:secId', function(req, res, next){
+router.put('/update/session/:secId', auth, function(req, res, next){
+  if(req.body.user.type !== 'grand'){
+		return res.status(401).send({
+			message: 'Permission Unauthorized'
+		})
+	}
   
   oracledb.getConnection(
     dbConfig,

@@ -100,12 +100,41 @@ router.post('/insert/sessionAdmin', function(req, res, next){
         }
 	  });
 	  
-	  res.status(200);
+	  res.status(200).send({
+		  msg: 'successfully inserted to db'
+	  })
 	//   doRelease(connection);
     }); 
     
   });
   
+
+  router.get('/get/sessionAdmin', function(req, res, next){
+
+    oracledb.getConnection(
+      dbConfig,
+      function(err, connection){
+        if(err) {
+          console.error(err.message);
+          return;
+        }
+  
+        connection.execute(
+          `select REFERENCE, USER_ID from admin order by REFERENCE`,
+  
+          function(err, result){
+            if(err){
+              console.error(err.message);
+              doRelease(connection);
+              return;
+            }
+            res.send(result.rows);
+            doRelease(connection);
+          }
+        )}
+    )
+  });
+
 
 
 
