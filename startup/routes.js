@@ -12,6 +12,7 @@ const routerMarksTable = require('../routes/marksTable');
 const routerThirdExaminer = require('../routes/thirdExaminerAssign');
 const routerSemesterResult = require('../routes/semisterResult');
 const routerSessionAdmin = require('../routes/sessionAdmin');
+const routerDepartmentAdmin = require('../routes/departmentAdmin');
 const routerLogin = require('../routes/login');
 
 
@@ -31,5 +32,6 @@ module.exports = function(app){
     app.use('/api', routerThirdExaminer);  
     app.use('/api', routerSemesterResult);  
     app.use('/api', routerSessionAdmin);  
+    app.use('/api', routerDepartmentAdmin);  
     app.use('/api', routerLogin);  
 }
