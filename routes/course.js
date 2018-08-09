@@ -2,22 +2,22 @@ const express = require('express');
 const oracledb = require('oracledb');
 const dbConfig = require('../dbConnection/dbconfig.js');
 const router = express.Router();
+const auth = require('../middleware/auth');
+const errorFunctions = require('../routes/errorFunction');
 
 
 oracledb.autoCommit = true;
 
 
 // insert Course Api
-router.post('/insert/course', function (req, res, next) {
+router.post('/insert/course', auth, function (req, res, next) {
+	if(errorFunctions.grandAndDeptAdminChecker(req.body.user.type, next)) return;
 
 	const cb = function (err, connection) {
-		if (err) {
-			res.status(401).send({
-				message: 'Problem occur in Database Connection'
-			});
-			return;
-		}
-
+		if (err) { 
+            errorFunctions.dbConnError()(next);
+            return;
+        }
 		const bindvars = {
 			dn: req.body.departmentName,
 			pg: req.body.program,
@@ -36,13 +36,10 @@ router.post('/insert/course', function (req, res, next) {
 		const anotherCallback = function (err, result) {
 
 			if (err) {
-				console.error(err.message);
-				res.status(401).send({
-					message: 'Problem occur in Database Query'
-				});
-				doRelease(connection);
-				return;
-			}
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
 			res.send(result.outBinds);
 			doRelease(connection);
 		}
@@ -58,12 +55,10 @@ router.post('/insert/course', function (req, res, next) {
 router.get('/get/course', function (req, res, next) {
 
 	const cb = function (err, connection) {
-		if (err) {
-			res.status(401).send({
-				message: 'Problem occur in Database Connection'
-			});
-			return;
-		}
+		if (err) { 
+            errorFunctions.dbConnError()(next);
+            return;
+        }
 		
 		const sql = `select c.course_code, c.course_title, c.course_credit, c.course_type, d.department_name, c.semester_id, s.session_desc, p.program_abbr
 					from courses c, department d, session_ s, program p
@@ -73,13 +68,10 @@ router.get('/get/course', function (req, res, next) {
 
 		const anotherCallback = function (err, result) {
 			if (err) {
-				console.error(err.message);
-				res.status(401).send({
-					message: 'Problem occur in Database Query'
-				});
-				doRelease(connection);
-				return;
-			}
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
 			res.send(result.rows);
 			doRelease(connection);
 		}
@@ -94,21 +86,19 @@ router.get('/get/course', function (req, res, next) {
 router.get('/get/semester', function (req, res, next) {
 
 	const cb = function (err, connection) {
-		if (err) {
-			res.status(401).send({
-				message: 'Problem occur in Database Connection'
-			});
-			return;
-		}
+		if (err) { 
+            errorFunctions.dbConnError()(next);
+            return;
+        }
 
 		const sql = `select semester_id from semester`
 
 		const anotherCallback = function (err, result) {
 			if (err) {
-				console.error(err.message);
-				doRelease(connection);
-				return;
-			}
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
 			res.send(result.rows);
 			doRelease(connection);
 		}
@@ -124,13 +114,13 @@ router.get('/get/semester', function (req, res, next) {
 //Update Course
 router.put('/update/course/:id', function (req, res, next) {
 
+	if(errorFunctions.grandAndDeptAdminChecker(req.body.user.type, next)) return;
+
 	const cb = function (err, connection) {
 		if (err) { 
-			res.status(401).send({
-				message: 'Problem occur in Database Connection'
-			});
-			return; 
-		}
+            errorFunctions.dbConnError()(next);
+            return;
+        }
 
 		const bindvars = {
 			f: req.body.facultyName,
@@ -145,12 +135,10 @@ router.put('/update/course/:id', function (req, res, next) {
 	
 		const anotherCallback = function (err, result) {
 			if (err) {
-				res.status(401).send({
-					message: 'Problem occur in Database Query'
-				});
-				doRelease(connection);
-				return;
-			}
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
 			res.send(result.outBinds);
 			doRelease(connection);
 		}

@@ -2,6 +2,8 @@
 const express = require('express');
 const oracledb = require('oracledb');
 const dbConfig = require('../dbConnection/dbconfig.js');
+const auth = require('../middleware/auth');
+const errorFunctions = require('../routes/errorFunction');
 
 const router = express.Router();
 
@@ -11,11 +13,14 @@ oracledb.autoCommit = true;
 
 //insert into CourseAssign
 router.post('/insert/courseassign', function (req, res, next) {
+
+	if(errorFunctions.grandAndDeptAdminChecker(req.body.user.type, next)) return;	
+
 	const cb = function (err, connection) {
-		if (err) {
-			console.error(err.message);
-			return;
-		}
+		if (err) { 
+            errorFunctions.dbConnError()(next);
+            return;
+        }
 
 		const bindvars = {
 			dn: req.body.departmentName,
@@ -27,10 +32,10 @@ router.post('/insert/courseassign', function (req, res, next) {
 
 		const anotherCb = function (err, result) {
 			if (err) {
-				console.error(err.message);
-				doRelease(connection);
-				return;
-			}
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
 			res.send(result.outBinds);
 			doRelease(connection);
 		}

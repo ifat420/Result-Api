@@ -4,26 +4,20 @@ const oracledb = require('oracledb');
 const dbConfig = require('../dbConnection/dbconfig.js');
 const auth = require('../middleware/auth');
 const router = express.Router();
-
+const errorFunctions = require('../routes/errorFunction');
 
 oracledb.autoCommit = true;
 
 
 //insert into faculty
 router.post('/insert/faculty', auth, function (req, res, next) {
-	if (req.body.user.type !== 'grand') {
-		return res.status(401).send({
-			message: 'Permission Unauthorized'
-		})
-	}
+	if(errorFunctions.grandChecker()(req.body.user.type, next)) return;
 
 	const cb = function (err, connection) {
 		if (err) { 
-			res.status(401).send({
-                message: 'Problem in Database Connection'
-            })
-			return; 
-		}
+            errorFunctions.dbConnError()(next);
+            return;
+        }
 
 		const bindvars = {
 			i: req.body.facultyName,
@@ -34,12 +28,10 @@ router.post('/insert/faculty', auth, function (req, res, next) {
 
 		const anotherCb = function (err, result) {
 			if (err) {
-				res.status(401).send({
-                    message: 'Problem in Database Query'
-                });
-				doRelease(connection);
-				return;
-			}
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
 			res.send(result.outBinds);
 			doRelease(connection);
 		}
@@ -56,23 +48,19 @@ router.post('/insert/faculty', auth, function (req, res, next) {
 router.get('/get/faculty', function (req, res, next) {
 
 	const cb = function (err, connection) {
-		if (err) {
-			res.status(401).send({
-                message: 'Problem in Database Connection'
-            })
-			return;
-		}
+		if (err) { 
+            errorFunctions.dbConnError()(next);
+            return;
+        }
 
 		const sql = "SELECT * FROM faculty ORDER BY faculty_name";
 
 		const anotherCb = function (err, result) {
 			if (err) {
-				res.status(401).send({
-                    message: 'Problem in Database Query'
-                });
-				doRelease(connection);
-				return;
-			}
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
 			res.send(result.rows);
 			doRelease(connection);
 		}
@@ -86,19 +74,13 @@ router.get('/get/faculty', function (req, res, next) {
 //update faculty
 
 router.put('/update/faculty/:id', auth, function (req, res, next) {
-	if (req.body.user.type !== 'grand') {
-		return res.status(401).send({
-			message: 'Permission Unauthorized'
-		})
-	}
+	if(errorFunctions.grandChecker()(req.body.user.type, next)) return;
 
 	const cb = function (err, connection) {
 		if (err) { 
-			res.status(401).send({
-                message: 'Problem in Database Connection'
-            }) 
-			return; 
-		}
+            errorFunctions.dbConnError()(next);
+            return;
+        }
 
 		const bindvars = {
 			id: req.params.id,
@@ -110,12 +92,10 @@ router.put('/update/faculty/:id', auth, function (req, res, next) {
 		
 		const anotherCb = function (err, result) {
 			if (err) {
-				res.status(401).send({
-                    message: 'Problem in Database Query'
-                });
-				doRelease(connection);
-				return;
-			}
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
 			res.send(result.outBinds);
 			doRelease(connection);
 		}

@@ -26,7 +26,11 @@ app.use((req, res, next) => {
 
 require('./startup/routes')(app);
 
-
+app.use(function(err, req, res, next) {
+    // console.log('res: ', res);
+    console.log('program err: ', err); 
+    res.status(err.status).send(err.message); 
+})
 
 app.listen(process.env.port || 4000, function(){
     console.log('now listening for request');
