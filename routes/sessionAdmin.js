@@ -16,6 +16,52 @@ oracledb.autoCommit = true;
 
 // insert Session Admin
 
+
+router.post('/update/sessionAdmin', function(req, res, next){
+	var uDet = {}
+	const cb = function (err, connection) {
+		if (err) { 
+            errorFunctions.dbConnError()(next);
+            return;
+		}
+		uDet[req.body.sessionId.toString()] =  req.body.nPsw;
+
+		const bindvars = {
+			nPwd: req.body.nPsw,
+			sId: req.body.sessionId
+		};
+		
+		try {
+			var hash = bcrypt.hashSync(req.body.nPsw, 10);
+			bindvars.nPwd = hash;
+		} catch (e) {
+			console.log(e);
+		}
+
+		fse.writeFile('../psw/Updatesession.json', JSON.stringify(uDet, null, 4)).then(() => {
+			console.log('success');
+		}).catch(e => {
+			console.log('e: ', e);
+		})
+
+		const sql = "Update Admin SET PASSWORD = :nPwd WHERE USER_ID = :sId";
+
+		const anotherCb = function (err, result) {
+			if (err) {
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
+			res.send(result.outBinds);
+			doRelease(connection);
+		}
+
+		connection.execute(sql, bindvars, anotherCb);
+	}
+
+	oracledb.getConnection(dbConfig, cb);
+})
+
 router.post('/insert/sessionAdmin', function (req, res, next) {
 	var uDet = {}
 	var resultArray = req.body;

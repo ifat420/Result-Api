@@ -3,7 +3,7 @@ const errorObj = {
 
         return (userType, next)=>{
             
-            if (userType !== 'grand') {
+            if (userType !== process.env.grand) {
             
                 const err = {
                     status: 401,
@@ -21,7 +21,7 @@ const errorObj = {
     grandAndDeptAdminChecker: function(){
 
         return (userType, next) => {
-            if (userType !== 'grand' || userType !== 'departmentAdmin') {
+            if (userType !== process.env.grand && userType !== process.env.dept) {
             
                 const err = {
                     status: 401,

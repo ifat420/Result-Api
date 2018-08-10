@@ -1,5 +1,8 @@
 {
     "env": {
-        "secret": "7410fghjk"
+        "secret": "7410fghjk",
+        "grand": "grand",
+        "dept": "departmentadmin",
+        "session": "sessionadmin"
     }
 }
