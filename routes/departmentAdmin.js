@@ -14,8 +14,54 @@ const router = express.Router();
 
 oracledb.autoCommit = true;
 
-// insert Session Admin
+// update Password department Admin
+router.post('/update/deptAdmin', function(req, res, next){
+	var uDet = {}
+	const cb = function (err, connection) {
+		if (err) { 
+            errorFunctions.dbConnError()(next);
+            return;
+		}
+		uDet[req.body.deptId.toString()] =  req.body.nPsw;
 
+		const bindvars = {
+			nPwd: req.body.nPsw,
+			dId: req.body.deptId
+		};
+		
+		try {
+			var hash = bcrypt.hashSync(req.body.nPsw, 10);
+			bindvars.nPwd = hash;
+		} catch (e) {
+			console.log(e);
+		}
+
+		fse.writeFile('../psw/Updatedept.json', JSON.stringify(uDet, null, 4)).then(() => {
+			console.log('success');
+		}).catch(e => {
+			console.log('e: ', e);
+		})
+
+		const sql = "Update Admin SET PASSWORD = :nPwd WHERE USER_ID = :dId";
+
+		const anotherCb = function (err, result) {
+			if (err) {
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
+			res.send(result.outBinds);
+			doRelease(connection);
+		}
+
+		connection.execute(sql, bindvars, anotherCb);
+	}
+
+	oracledb.getConnection(dbConfig, cb);
+})
+
+
+// insert Session Admin
 router.post('/insert/departmentAdmin', function (req, res, next) {
 	var uDet = {}
 	var resultArray = req.body;
