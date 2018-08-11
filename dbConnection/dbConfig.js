@@ -1,5 +1,5 @@
 module.exports = {
-    user          : process.env.NODE_ORACLEDB_USER || "sdn",
+    user          : process.env.NODE_ORACLEDB_USER || "sdn", 
   
     // Instead of hard coding the password, consider prompting for it,
     // passing it in an environment variable via process.env, or using
