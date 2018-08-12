@@ -14,21 +14,19 @@ const router = express.Router();
 
 oracledb.autoCommit = true;
 
-// insert Session Admin
-
-
-router.post('/update/sessionAdmin', function(req, res, next){
+// update Password department Admin
+router.post('/update/deptAdmin', function(req, res, next){
 	var uDet = {}
 	const cb = function (err, connection) {
 		if (err) { 
             errorFunctions.dbConnError()(next);
             return;
 		}
-		uDet[req.body.sessionId.toString()] =  req.body.nPsw;
+		uDet[req.body.deptId.toString()] =  req.body.nPsw;
 
 		const bindvars = {
 			nPwd: req.body.nPsw,
-			sId: req.body.sessionId
+			dId: req.body.deptId
 		};
 		
 		try {
@@ -38,13 +36,13 @@ router.post('/update/sessionAdmin', function(req, res, next){
 			console.log(e);
 		}
 
-		fse.writeFile('../psw/Updatesession.json', JSON.stringify(uDet, null, 4)).then(() => {
+		fse.writeFile('../psw/Updatedept.json', JSON.stringify(uDet, null, 4)).then(() => {
 			console.log('success');
 		}).catch(e => {
 			console.log('e: ', e);
 		})
 
-		const sql = "Update Admin SET PASSWORD = :nPwd WHERE USER_ID = :sId";
+		const sql = "Update Admin SET PASSWORD = :nPwd WHERE USER_ID = :dId";
 
 		const anotherCb = function (err, result) {
 			if (err) {
@@ -62,9 +60,12 @@ router.post('/update/sessionAdmin', function(req, res, next){
 	oracledb.getConnection(dbConfig, cb);
 })
 
-router.post('/insert/sessionAdmin', function (req, res, next) {
+
+// insert Session Admin
+router.post('/insert/departmentAdmin', function (req, res, next) {
 	var uDet = {}
 	var resultArray = req.body;
+	// console.log('resultArray: ', resultArray);
 
 	const cb =  function (err, connection) {
 		if (err) { 
@@ -76,17 +77,17 @@ router.post('/insert/sessionAdmin', function (req, res, next) {
 
 		var userPwd = [];
 
-		var sesId = [];
+		var deptId = [];
 
 		var adCat = [];
 
 
 
 		obj.forEach(el => {
-			let unm = `${el.deptAbbr}-${el.sesDes}`;
+			let unm = `${el.deptAbbr}`;
 			userID.push(unm);
-			sesId.push(el.sesId.toString());
-			adCat.push(parseFloat(3));
+			deptId.push(el.deptId.toString());
+			adCat.push(parseFloat(2));
 			let password = generator.generate({
 				length: 6,
 				numbers: true
@@ -104,7 +105,7 @@ router.post('/insert/sessionAdmin', function (req, res, next) {
 
 		});
 
-		fse.writeFile('../psw/session.json', JSON.stringify(uDet, null, 4)).then(() => {
+		fse.writeFile('../psw/dept.json', JSON.stringify(uDet, null, 4)).then(() => {
 			console.log('success');
 		}).catch(e => {
 			console.log('e: ', e);
@@ -118,13 +119,13 @@ router.post('/insert/sessionAdmin', function (req, res, next) {
 				
 						l_userID varchar2_aat := :userID;
 						l_userPwd varchar2_aat := :userPwd;
-						l_secId varchar2_aat := :sesId;
+						l_deptId varchar2_aat := :deptId;
 						l_adCat number_aat := :adCat;
 					begin
 						for x in l_userID.first .. l_userID.last LOOP
 				
 						INSERT INTO admin(ID, USER_ID, PASSWORD, REFERENCE, ADMINCATEGORY_ID)
-						VALUES(adminId_generator_f(), UPPER(l_userID(x)), l_userPwd(x), l_secId(x), l_adCat(x));
+						VALUES(adminId_generator_f(), UPPER(l_userID(x)), l_userPwd(x), l_deptId(x), l_adCat(x));
 						END LOOP;
 					end;`;
 
@@ -139,10 +140,10 @@ router.post('/insert/sessionAdmin', function (req, res, next) {
 				dir: oracledb.BIND_IN,
 				val: userPwd
 			},
-			sesId: {
+			deptId: {
 				type: oracledb.STRING,
 				dir: oracledb.BIND_IN,
-				val: sesId
+				val: deptId
 			},
 
 			adCat: {
@@ -165,7 +166,7 @@ router.post('/insert/sessionAdmin', function (req, res, next) {
 });
 
 
-router.get('/get/sessionAdmin', function (req, res, next) {
+router.get('/get/departmentAdmin', function (req, res, next) {
 
 	const cb = function (err, connection) {
 		if (err) { 
@@ -173,7 +174,7 @@ router.get('/get/sessionAdmin', function (req, res, next) {
             return;
         }
 
-		const sql = `select a.REFERENCE, a.USER_ID from admin a, ADMINCATEGORY at where at.ID = a.ADMINCATEGORY_ID and at.STATUS = 'sessionadmin'  order by REFERENCE`;
+		const sql = `select a.REFERENCE, a.USER_ID from admin a, ADMINCATEGORY at where at.ID = a.ADMINCATEGORY_ID and at.STATUS = 'departmentadmin'  order by REFERENCE`;
 
 		const anoterCb = function (err, result) {
 			if (err) {
