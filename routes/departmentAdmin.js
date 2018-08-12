@@ -50,7 +50,10 @@ router.post('/update/deptAdmin', function(req, res, next){
                 doRelease(connection);
                 return;
             }
-			res.send(result.outBinds);
+			res.status(200).send({
+				msg: 'Department admin Password Successfully'
+			})
+			
 			doRelease(connection);
 		}
 
@@ -156,7 +159,7 @@ router.post('/insert/departmentAdmin', function (req, res, next) {
 		connection.execute(sql, bindvars);
 
 		res.status(200).send({
-			msg: 'successfully inserted to db'
+			msg: 'Department Admin Assign Successfully'
 		})
 		//   doRelease(connection);
 	}
@@ -202,7 +205,9 @@ router.post('/update/grand', auth, function(req, res, next){
                 doRelease(connection);
                 return;
             }
-			res.send(result.outBinds);
+			res.status(200).send({
+				msg: 'Admin password Update successfully'
+			})
 			doRelease(connection);
 		}
 
