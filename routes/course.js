@@ -112,7 +112,8 @@ router.get('/get/semester', function (req, res, next) {
 
 
 //Update Course
-router.put('/update/course/:id', function (req, res, next) {
+router.put('/update/course/:id',auth, function (req, res, next) {
+
 
 	if(errorFunctions.grandAndDeptAdminChecker(req.body.user.type, next)) return;
 

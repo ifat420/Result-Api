@@ -14,7 +14,7 @@ oracledb.autoCommit = true;
 //insert into CourseAssign
 router.post('/insert/courseassign',auth, function (req, res, next) {
 
-	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;	
+	if(errorFunctions.deptChecker()(req.body.user.type, next)) return;	
 
 	const cb = function (err, connection) {
 		if (err) { 
