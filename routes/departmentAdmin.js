@@ -165,6 +165,53 @@ router.post('/insert/departmentAdmin', function (req, res, next) {
 
 });
 
+router.post('/update/grand', auth, function(req, res, next){
+	if(errorFunctions.grandChecker()(req.body.user.type, next)) return;
+	var uDet = {}
+	// console.log(req.body);
+	const cb = function (err, connection) {
+		if (err) { 
+            errorFunctions.dbConnError()(next);
+            return;
+		}
+		uDet[req.body.gId.toString()] =  req.body.nPsw;
+
+		const bindvars = {
+			nPwd: req.body.nPsw,
+			gId: req.body.gId
+		};
+		
+		try {
+			var hash = bcrypt.hashSync(req.body.nPsw, 10);
+			bindvars.nPwd = hash;
+		} catch (e) {
+			console.log(e);
+		}
+
+		fse.writeFile('../psw/grandUpdate.json', JSON.stringify(uDet, null, 4)).then(() => {
+			console.log('success');
+		}).catch(e => {
+			console.log('e: ', e);
+		})
+
+		const sql = "Update Admin SET PASSWORD = :nPwd WHERE USER_ID = :gId";
+
+		const anotherCb = function (err, result) {
+			if (err) {
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
+			res.send(result.outBinds);
+			doRelease(connection);
+		}
+
+		connection.execute(sql, bindvars, anotherCb);
+	}
+
+	oracledb.getConnection(dbConfig, cb);
+})
+
 
 router.get('/get/departmentAdmin', function (req, res, next) {
 
@@ -191,6 +238,7 @@ router.get('/get/departmentAdmin', function (req, res, next) {
 
 	oracledb.getConnection(dbConfig, cb);
 });
+
 
 
 
