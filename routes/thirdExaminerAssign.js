@@ -11,7 +11,9 @@ const router = express.Router();
 oracledb.autoCommit = true;
 
 
-router.post('/insert/marksThirdExaminerTheory', function (req, res, next) {
+router.post('/insert/marksThirdExaminerTheory', auth, function (req, res, next) {
+
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 
 	const cb = function (err, connection) {
 		if (err) { 
@@ -58,7 +60,9 @@ router.post('/insert/marksThirdExaminerTheory', function (req, res, next) {
 });
 
 
-router.post('/insert/marksThirdExaminerThesisProject', function (req, res, next) {
+router.post('/insert/marksThirdExaminerThesisProject', auth, function (req, res, next) {
+
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 
 	const cb = function (err, connection) {
 		if (err) { 
@@ -105,7 +109,9 @@ router.post('/insert/marksThirdExaminerThesisProject', function (req, res, next)
 });
 
 
-router.post('/insert/marksTableThirdExaminerTheory', function (req, res, next) {
+router.post('/insert/marksTableThirdExaminerTheory', auth, function (req, res, next) {
+
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 	var resultArray = req.body;
 
 	const cb = function (err, connection) {
@@ -185,7 +191,8 @@ router.post('/insert/marksTableThirdExaminerTheory', function (req, res, next) {
 });
 
 
-router.post('/insert/marksTableThirdExaminerThesisProject', function (req, res, next) {
+router.post('/insert/marksTableThirdExaminerThesisProject', auth, function (req, res, next) {
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 	var resultArray = req.body;
 
 	const cb = function (err, connection) {

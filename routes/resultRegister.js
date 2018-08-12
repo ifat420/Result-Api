@@ -12,7 +12,9 @@ oracledb.autoCommit = true;
 
 
 //insert into department
-router.post('/insert/resultRegister', function (req, res, next) {
+router.post('/insert/resultRegister', auth, function (req, res, next) {
+
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 
 	const cb = function (err, connection) {
 		if (err) {

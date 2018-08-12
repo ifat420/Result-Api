@@ -17,6 +17,42 @@ const errorObj = {
         }
         
     },
+    deptChecker:  function() {
+
+        return (userType, next)=>{
+            
+            if (userType !== process.env.dept) {
+            
+                const err = {
+                    status: 401,
+                    message: 'Permission Unauthorized'
+                }
+                next(err);
+                return true; 
+            }
+
+            return false;
+        }
+        
+    },
+    sessionAndDept:  function() {
+
+        return (userType, next)=>{
+            
+            if (userType !== process.env.dept && userType !== process.env.session) {
+            
+                const err = {
+                    status: 401,
+                    message: 'Permission Unauthorized'
+                }
+                next(err);
+                return true; 
+            }
+
+            return false;
+        }
+        
+    },
 
     grandAndDeptAdminChecker: function(){
 

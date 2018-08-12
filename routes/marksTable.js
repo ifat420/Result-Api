@@ -12,7 +12,7 @@ oracledb.autoCommit = true;
 
 //insert into markstable
 router.post('/insert/markstable',auth, function (req, res, next) {
-	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 	var resultArray = req.body;
 	var id;
 
@@ -153,13 +153,18 @@ router.post('/insert/markstable',auth, function (req, res, next) {
 					val: courseAssignId
 				}
 			});
-	}
+			
+			res.status(200).send({
+				msg: 'successfully inserted to db'
+			})
 
+
+	}
 	oracledb.getConnection(dbConfig, cb);
 });
 
 router.post('/insert/markstableFilledLab',auth, function (req, res, next) {
-	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 	var resultArray = req.body;
 
 	const cb = function (err, connection) {
@@ -275,7 +280,7 @@ router.post('/insert/markstableFilledLab',auth, function (req, res, next) {
 
 
 router.post('/insert/markstableFilledViva',auth, function (req, res, next) {
-	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 	var resultArray = req.body;
 
 	const cb = function (err, connection) {
@@ -367,7 +372,7 @@ router.post('/insert/markstableFilledViva',auth, function (req, res, next) {
 //get all into facultyd
 
 router.post('/insert/markstableFilledThesisProject', auth,function (req, res, next) {
-	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 	var resultArray = req.body;
 
 	const cb = function (err, connection) {
@@ -499,7 +504,7 @@ router.post('/insert/markstableFilledThesisProject', auth,function (req, res, ne
 
 //blank marksheetTheory
 router.post('/insert/markstableblanktheory',auth, function (req, res, next) {
-	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 	const cb = function (err, connection) {
 		if (err) { 
             errorFunctions.dbConnError()(next);
@@ -549,7 +554,7 @@ router.post('/insert/markstableblanktheory',auth, function (req, res, next) {
 //blank marksheetLab
 router.post('/insert/markstableblanklab', auth, function (req, res, next) {
 
-	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 	oracledb.getConnection(
 		dbConfig,
 		function (err, connection) {
@@ -594,7 +599,7 @@ router.post('/insert/markstableblanklab', auth, function (req, res, next) {
 //blank marksheetLab
 router.post('/insert/markstableblankviva', auth, function (req, res, next) {
 
-	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 
 	oracledb.getConnection(
 		dbConfig,
@@ -640,7 +645,7 @@ router.post('/insert/markstableblankviva', auth, function (req, res, next) {
 //blank marksheetThesisProject
 router.post('/insert/markstableblankthesisproject', auth, function (req, res, next) {
 
-	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
+	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 
 	oracledb.getConnection(
 		dbConfig,

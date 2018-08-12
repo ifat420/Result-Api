@@ -93,6 +93,146 @@ router.post('/insert/getfailsubjects', function (req, res, next) {
 
 
 
+router.post('/insert/eachstdresult', function (req, res, next) {
+
+	const cb = function (err, connection) {
+		if (err) { 
+            errorFunctions.dbConnError()(next);
+            return;
+        }
+
+		var bindvars = {
+			roll: req.body.studentRoll,
+			sec: req.body.session,
+			sem: req.body.semisterId
+		};
+
+		const sql = `select COURSE_CODE, COURSE_TITLE, COURSE_CREDIT, LETTER_GRADE, POINT, DEPARTMENT_NAME
+						from FINALRESULTTABLE 
+						WHERE STUDENT_ROLL = :roll AND
+						SESSION_DESC = :sec AND
+						SEMESTER = :sem`;
+
+		const anotherCb = function (err, result) {
+			if (err) {
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
+			res.send(result);
+			doRelease(connection);
+		}
+		connection.execute(sql, bindvars, anotherCb);
+	}
+
+	oracledb.getConnection(dbConfig, cb);
+
+});
+
+router.post('/insert/stdcgpa', function (req, res, next) {
+
+	const cb = function (err, connection) {
+		if (err) { 
+            errorFunctions.dbConnError()(next);
+            return;
+        }
+
+		var bindvars = {
+			roll: req.body.studentRoll,
+			sec: req.body.session,
+			sem: req.body.semisterId
+		};
+		
+		const sql = `select  sum( course_credit * point ), sum(course_credit)
+					from FINALRESULTTABLE
+					where total > 39 and semester = :sem and
+					session_desc = :sec and 
+					student_roll = :roll`;
+
+		const anotherCb = function (err, result) {
+			if (err) {
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
+			res.send(result);
+			doRelease(connection);
+		}
+		connection.execute(sql, bindvars, anotherCb);
+	}
+
+	oracledb.getConnection(dbConfig, cb);
+
+});
+
+router.post('/insert/studentname', function (req, res, next) {
+
+	const cb = function (err, connection) {
+		if (err) { 
+            errorFunctions.dbConnError()(next);
+            return;
+        }
+
+		var bindvars = {
+			roll: req.body.studentRoll
+		};
+
+		const sql = `select student_first_name || ' ' || student_second_name from STUDENT_INFO where student_roll = :roll`;
+
+		const anotherCb = function (err, result) {
+			if (err) {
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
+			res.send(result);
+			doRelease(connection);
+		}
+		connection.execute(sql, bindvars, anotherCb);
+	}
+
+	oracledb.getConnection(dbConfig, cb);
+
+});
+
+router.post('/insert/totalcredit', function (req, res, next) {
+
+	const cb = function (err, connection) {
+		if (err) { 
+            errorFunctions.dbConnError()(next);
+            return;
+        }
+
+		var bindvars = {
+			roll: req.body.studentRoll,
+			sec: req.body.session,
+			sem: req.body.semisterId
+		};
+
+		const sql = `select      sum(course_credit)
+					from FINALRESULTTABLE
+					where semester = :sem and
+					session_desc = :sec and 
+					student_roll = :roll`;
+
+		const anotherCb = function (err, result) {
+			if (err) {
+                errorFunctions.dbQueryProblem()(next);
+                doRelease(connection);
+                return;
+            }
+			res.send(result);
+			doRelease(connection);
+		}
+		connection.execute(sql, bindvars, anotherCb);
+	}
+
+	oracledb.getConnection(dbConfig, cb);
+
+});
+
+
+
 
 
 //db connection close
