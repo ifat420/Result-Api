@@ -11,7 +11,7 @@ oracledb.autoCommit = true;
 
 // insert Course Api
 router.post('/insert/course', auth, function (req, res, next) {
-	if(errorFunctions.grandAndDeptAdminChecker(req.body.user.type, next)) return;
+	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
 
 	const cb = function (err, connection) {
 		if (err) { 

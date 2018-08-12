@@ -59,7 +59,7 @@ router.get('/get/session', function (req, res, next) {
             return;
         }
 
-		const sql = `select d.department_name, p.program_abbr, s.session_desc,f.faculty_name, s.session_id, d.department_abbr
+		const sql = `select d.department_name, p.program_abbr, s.session_desc,f.faculty_name, s.session_id, d.department_abbr, s.ACADEMIC_YEAR
 						from department d, program p, session_ s, faculty f
 						where s.program_id = p.program_id and
 						p.department_id = d.department_id and
@@ -96,12 +96,14 @@ router.put('/update/session/:secId', auth, function (req, res, next) {
 
 		var bindvars = {
 			secId: req.params.secId,
-			sec: req.body.session,
-			acyr: req.body.academicYr,
+			deptNm: req.body.deptName,
+			prog: req.body.progName,
+			secD: req.body.session,
+			acY: req.body.academicYr,
 			msg: { type: oracledb.STRING, dir: oracledb.BIND_OUT }
 		};
 
-		const sql = "BEGIN update_session_p(:secId, :sec, :acyr, :msg); END;";
+		const sql = "BEGIN update_session_p(:deptNm, :prog, :secId, :secD, :acY, :msg); END;";
 
 		const anoterCb = function (err, result) {
 			if (err) {
