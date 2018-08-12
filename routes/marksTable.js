@@ -153,8 +153,13 @@ router.post('/insert/markstable',auth, function (req, res, next) {
 					val: courseAssignId
 				}
 			});
-	}
+			
+			res.status(200).send({
+				msg: 'successfully inserted to db'
+			})
 
+
+	}
 	oracledb.getConnection(dbConfig, cb);
 });
 
