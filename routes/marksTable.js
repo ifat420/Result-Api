@@ -11,7 +11,8 @@ oracledb.autoCommit = true;
 
 
 //insert into markstable
-router.post('/insert/markstable', function (req, res, next) {
+router.post('/insert/markstable',auth, function (req, res, next) {
+	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
 	var resultArray = req.body;
 	var id;
 
@@ -157,7 +158,8 @@ router.post('/insert/markstable', function (req, res, next) {
 	oracledb.getConnection(dbConfig, cb);
 });
 
-router.post('/insert/markstableFilledLab', function (req, res, next) {
+router.post('/insert/markstableFilledLab',auth, function (req, res, next) {
+	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
 	var resultArray = req.body;
 
 	const cb = function (err, connection) {
@@ -272,7 +274,8 @@ router.post('/insert/markstableFilledLab', function (req, res, next) {
 });
 
 
-router.post('/insert/markstableFilledViva', function (req, res, next) {
+router.post('/insert/markstableFilledViva',auth, function (req, res, next) {
+	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
 	var resultArray = req.body;
 
 	const cb = function (err, connection) {
@@ -363,7 +366,8 @@ router.post('/insert/markstableFilledViva', function (req, res, next) {
 });
 //get all into facultyd
 
-router.post('/insert/markstableFilledThesisProject', function (req, res, next) {
+router.post('/insert/markstableFilledThesisProject', auth,function (req, res, next) {
+	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
 	var resultArray = req.body;
 
 	const cb = function (err, connection) {
@@ -494,8 +498,8 @@ router.post('/insert/markstableFilledThesisProject', function (req, res, next) {
 
 
 //blank marksheetTheory
-router.post('/insert/markstableblanktheory', function (req, res, next) {
-
+router.post('/insert/markstableblanktheory',auth, function (req, res, next) {
+	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
 	const cb = function (err, connection) {
 		if (err) { 
             errorFunctions.dbConnError()(next);
@@ -545,7 +549,7 @@ router.post('/insert/markstableblanktheory', function (req, res, next) {
 //blank marksheetLab
 router.post('/insert/markstableblanklab', auth, function (req, res, next) {
 
-
+	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
 	oracledb.getConnection(
 		dbConfig,
 		function (err, connection) {
@@ -590,11 +594,7 @@ router.post('/insert/markstableblanklab', auth, function (req, res, next) {
 //blank marksheetLab
 router.post('/insert/markstableblankviva', auth, function (req, res, next) {
 
-	if (req.body.user.type !== 'grand' || req.body.user.type !== 'sessionAdmin') {
-		return res.status(401).send({
-			message: 'Permission Unauthorized'
-		})
-	}
+	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
 
 	oracledb.getConnection(
 		dbConfig,
@@ -640,11 +640,7 @@ router.post('/insert/markstableblankviva', auth, function (req, res, next) {
 //blank marksheetThesisProject
 router.post('/insert/markstableblankthesisproject', auth, function (req, res, next) {
 
-	if (req.body.user.type !== 'grand' || req.body.user.type !== 'sessionAdmin') {
-		return res.status(401).send({
-			message: 'Permission Unauthorized'
-		})
-	}
+	if(errorFunctions.grandAndDeptAdminChecker()(req.body.user.type, next)) return;
 
 	oracledb.getConnection(
 		dbConfig,

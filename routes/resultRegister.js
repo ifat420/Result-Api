@@ -28,7 +28,7 @@ router.post('/insert/resultRegister', function (req, res, next) {
 			msg: { type: oracledb.STRING, dir: oracledb.BIND_OUT }
 		};
 
-		const sql = "BEGIN insert_course_assign_p(:dn, :pg, :se, :si, :msg); END;";
+		const sql = "BEGIN insert_result_register_p(:dn, :pg, :se, :si, :msg); END;";
 
 		const anotherCb = function (err, result) {
 			if (err) {
