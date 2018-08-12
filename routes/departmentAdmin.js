@@ -236,10 +236,10 @@ router.get('/get/departmentAdmin', function (req, res, next) {
             }
 			res.send(result.rows);
 			doRelease(connection);
-		}
+		};
 
 		connection.execute(sql, anoterCb);
-	}
+	};
 
 	oracledb.getConnection(dbConfig, cb);
 });
