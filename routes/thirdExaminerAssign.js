@@ -183,7 +183,7 @@ router.post('/insert/marksTableThirdExaminerTheory', auth, function (req, res, n
 
 		connection.execute(sql, bindvars);
 		res.status(200).send({
-			msg: 'successfully inserted to db'
+			msg: 'successfully inserted ThirdExaminer'
 		})
 	}
 

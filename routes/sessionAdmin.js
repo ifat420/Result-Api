@@ -52,7 +52,9 @@ router.post('/update/sessionAdmin', function(req, res, next){
                 doRelease(connection);
                 return;
             }
-			res.send(result.outBinds);
+			res.status(200).send({
+				msg: 'Update Session Admin successfully'
+			})
 			doRelease(connection);
 		}
 
@@ -155,7 +157,7 @@ router.post('/insert/sessionAdmin', function (req, res, next) {
 		connection.execute(sql, bindvars);
 
 		res.status(200).send({
-			msg: 'successfully inserted to db'
+			msg: 'Session Admin Assign successfully'
 		})
 		//   doRelease(connection);
 	}
