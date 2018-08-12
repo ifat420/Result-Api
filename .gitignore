@@ -1,2 +1,9 @@
+<<<<<<< HEAD
+
+node_modules/
+.vscode
+dbConnection/dbConfig.js 
+=======
 node_modules/
 dbConnection/
+>>>>>>> 09e091611ad5a6d4c348ccd5a3ddba472f303851
