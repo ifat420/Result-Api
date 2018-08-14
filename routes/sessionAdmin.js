@@ -85,7 +85,7 @@ router.post('/insert/sessionAdmin', function (req, res, next) {
 
 
 		obj.forEach(el => {
-			let unm = `${el.deptAbbr}-${el.sesDes}`;
+			let unm = `${el.deptAbbr}-${el.sesDes}-${el.programAbbr}`;
 			userID.push(unm);
 			sesId.push(el.sesId.toString());
 			adCat.push(parseFloat(3));

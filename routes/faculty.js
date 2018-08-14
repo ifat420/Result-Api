@@ -31,7 +31,7 @@ router.post('/insert/faculty', auth, function (req, res, next) {
                 errorFunctions.dbQueryProblem()(next);
                 doRelease(connection);
                 return;
-            }
+			}
 			res.send(result.outBinds);
 			doRelease(connection);
 		}
