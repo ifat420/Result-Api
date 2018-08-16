@@ -13,8 +13,8 @@ oracledb.autoCommit = true;
 
 router.post('/insert/marksThirdExaminerTheory', auth, function (req, res, next) {
 
-	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
-
+	// if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
+	// console.log(req.body);
 	const cb = function (err, connection) {
 		if (err) { 
             errorFunctions.dbConnError()(next);
@@ -22,7 +22,7 @@ router.post('/insert/marksThirdExaminerTheory', auth, function (req, res, next) 
         }
 
 		var bindvars = {
-			dn: req.body.departmentName,
+			dn: req.body.departmentAbbr,
 			pg: req.body.program,
 			se: req.body.session,
 			si: req.body.semisterId
@@ -36,7 +36,7 @@ router.post('/insert/marksThirdExaminerTheory', auth, function (req, res, next) 
 						s.SESSION_ID = ca.SESSION_ID and 
 						ca.COURSE_ASSIGN_ID = mt.COURSE_ASSIGN_ID and
 						mt.COURSE_ID = cor.COURSE_ID and
-						d.DEPARTMENT_NAME = UPPER(:dn)
+						d.DEPARTMENT_ABBR = UPPER(:dn)
 						and p.PROGRAM_ABBR= UPPER(:pg)
 						and s.SESSION_DESC = :se
 						and ca.SEMESTER_ID = :si
@@ -62,7 +62,7 @@ router.post('/insert/marksThirdExaminerTheory', auth, function (req, res, next) 
 
 router.post('/insert/marksThirdExaminerThesisProject', auth, function (req, res, next) {
 
-	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
+	// if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 
 	const cb = function (err, connection) {
 		if (err) { 
@@ -71,7 +71,7 @@ router.post('/insert/marksThirdExaminerThesisProject', auth, function (req, res,
         }
 
 		var bindvars = {
-			dn: req.body.departmentName,
+			dn: req.body.departmentAbbr,
 			pg: req.body.program,
 			se: req.body.session,
 			si: req.body.semisterId
@@ -85,7 +85,7 @@ router.post('/insert/marksThirdExaminerThesisProject', auth, function (req, res,
 						s.SESSION_ID = ca.SESSION_ID and 
 						ca.COURSE_ASSIGN_ID = mt.COURSE_ASSIGN_ID and
 						mt.COURSE_ID = cor.COURSE_ID and
-						d.DEPARTMENT_NAME = UPPER(:dn)
+						d. = UPPER(:dn)
 						and p.PROGRAM_ABBR= UPPER(:pg)
 						and s.SESSION_DESC = :se
 						and ca.SEMESTER_ID = :si
@@ -111,7 +111,7 @@ router.post('/insert/marksThirdExaminerThesisProject', auth, function (req, res,
 
 router.post('/insert/marksTableThirdExaminerTheory', auth, function (req, res, next) {
 
-	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
+	// if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 	var resultArray = req.body;
 
 	const cb = function (err, connection) {
@@ -192,7 +192,7 @@ router.post('/insert/marksTableThirdExaminerTheory', auth, function (req, res, n
 
 
 router.post('/insert/marksTableThirdExaminerThesisProject', auth, function (req, res, next) {
-	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
+	// if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
 	var resultArray = req.body;
 
 	const cb = function (err, connection) {

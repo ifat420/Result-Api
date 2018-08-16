@@ -12,7 +12,7 @@ oracledb.autoCommit = true;
 
 
 router.post('/insert/getcreditpointmult', function (req, res, next) {
-
+	console.log(req.body);
 	const cb = function (err, connection) {
 		if (err) { 
             errorFunctions.dbConnError()(next);
@@ -20,7 +20,7 @@ router.post('/insert/getcreditpointmult', function (req, res, next) {
         }
 
 		var bindvars = {
-			dn: req.body.departmentName,
+			dn: req.body.departmentAbbr,
 			pg: req.body.program,
 			se: req.body.session,
 			si: req.body.semisterId
@@ -31,7 +31,7 @@ router.post('/insert/getcreditpointmult', function (req, res, next) {
 						where total > 39 and semester = :si and
 						session_desc = :se and 
 						program_abbr = UPPER(:pg) and
-						department_name = UPPER(:dn)
+						department_abbr = UPPER(:dn)
 						group by STUDENT_ROLL order by student_roll`;
 
 		const anotherCb = function (err, result) {
@@ -62,7 +62,7 @@ router.post('/insert/getfailsubjects', function (req, res, next) {
         }
 
 		var bindvars = {
-			dn: req.body.departmentName,
+			dn: req.body.departmentAbbr,
 			pg: req.body.program,
 			se: req.body.session,
 			si: req.body.semisterId
@@ -72,7 +72,7 @@ router.post('/insert/getfailsubjects', function (req, res, next) {
 						FROM FINALRESULTTABLE WHERE total < 39  and semester = :si and
 								session_desc = :se and 
 								program_abbr = UPPER(:pg) and
-								department_name = UPPER(:dn)
+								department_abbr = UPPER(:dn)
 						GROUP BY STUDENT_ROLL`;
 
 		const anotherCb = function (err, result) {

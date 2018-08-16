@@ -10,6 +10,10 @@ const router = express.Router();
 oracledb.autoCommit = true;
 
 
+
+
+
+
 //insert into markstable
 router.post('/insert/markstable',auth, function (req, res, next) {
 	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
@@ -504,7 +508,8 @@ router.post('/insert/markstableFilledThesisProject', auth,function (req, res, ne
 
 //blank marksheetTheory
 router.post('/insert/markstableblanktheory',auth, function (req, res, next) {
-	if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
+	// if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
+	// console.log(req.body);
 	const cb = function (err, connection) {
 		if (err) { 
             errorFunctions.dbConnError()(next);
@@ -512,11 +517,13 @@ router.post('/insert/markstableblanktheory',auth, function (req, res, next) {
         }
 
 		var bindvars = {
-			dn: req.body.departmentName,
+			dn: req.body.departmentAbbr,
 			pg: req.body.program,
 			se: req.body.session,
 			si: req.body.semisterId
 		};
+
+		// console.log('bindvars: ', bindvars);
 
 		const sql = `select mt.student_roll, cor.course_title, mt.CLASS_TEST, mt.ATTENDANCE, mt.internal_examiner,mt.EXTERNAL_EXAMINER, mt.STATUS ,mt.COURSE_ASSIGN_ID, mt.COURSE_ID 
 						from DEPARTMENT d, program p, session_ s, COURSE_ASSIGN ca, MARKS_THEORY mt, COURSES cor
@@ -525,7 +532,7 @@ router.post('/insert/markstableblanktheory',auth, function (req, res, next) {
 						s.SESSION_ID = ca.SESSION_ID and 
 						ca.COURSE_ASSIGN_ID = mt.COURSE_ASSIGN_ID and
 						mt.COURSE_ID = cor.COURSE_ID and
-						d.DEPARTMENT_NAME = UPPER(:dn)
+						d.DEPARTMENT_ABBR = UPPER(:dn)
 						and p.PROGRAM_ABBR= UPPER(:pg)
 						and s.SESSION_DESC = :se
 						and ca.SEMESTER_ID = :si
@@ -564,7 +571,7 @@ router.post('/insert/markstableblanklab', auth, function (req, res, next) {
 			}
 
 			var bindvars = {
-				dn: req.body.departmentName,
+				dn: req.body.departmentAbbr,
 				pg: req.body.program,
 				se: req.body.session,
 				si: req.body.semisterId
@@ -577,7 +584,7 @@ router.post('/insert/markstableblanklab', auth, function (req, res, next) {
           s.SESSION_ID = ca.SESSION_ID and 
           ca.COURSE_ASSIGN_ID = mt.COURSE_ASSIGN_ID and
           mt.COURSE_ID = cor.COURSE_ID and
-           d.DEPARTMENT_NAME = UPPER(:dn)
+           d.DEPARTMENT_ABBR = UPPER(:dn)
           and p.PROGRAM_ABBR= UPPER(:pg)
           and s.SESSION_DESC = :se
           and ca.SEMESTER_ID = :si
@@ -610,7 +617,7 @@ router.post('/insert/markstableblankviva', auth, function (req, res, next) {
 			}
 
 			var bindvars = {
-				dn: req.body.departmentName,
+				dn: req.body.departmentAbbr,
 				pg: req.body.program,
 				se: req.body.session,
 				si: req.body.semisterId
@@ -623,7 +630,7 @@ router.post('/insert/markstableblankviva', auth, function (req, res, next) {
           s.SESSION_ID = ca.SESSION_ID and 
           ca.COURSE_ASSIGN_ID = mt.COURSE_ASSIGN_ID and
           mt.COURSE_ID = cor.COURSE_ID and
-           d.DEPARTMENT_NAME = UPPER(:dn)
+           d.DEPARTMENT_ABBR = UPPER(:dn)
           and p.PROGRAM_ABBR= UPPER(:pg)
           and s.SESSION_DESC = :se
           and ca.SEMESTER_ID = :si
@@ -653,7 +660,7 @@ router.post('/insert/markstableblankthesisproject', auth, function (req, res, ne
 			if (err) { console.error(err.message); return; }
 
 			var bindvars = {
-				dn: req.body.departmentName,
+				dn: req.body.departmentAbbr,
 				pg: req.body.program,
 				se: req.body.session,
 				si: req.body.semisterId
@@ -666,11 +673,47 @@ router.post('/insert/markstableblankthesisproject', auth, function (req, res, ne
           s.SESSION_ID = ca.SESSION_ID and 
           ca.COURSE_ASSIGN_ID = mt.COURSE_ASSIGN_ID and
           mt.COURSE_ID = cor.COURSE_ID and
-           d.DEPARTMENT_NAME = UPPER(:dn)
+           d.DEPARTMENT_ABBR = UPPER(:dn)
           and p.PROGRAM_ABBR= UPPER(:pg)
           and s.SESSION_DESC = :se
           and ca.SEMESTER_ID = :si
           order by mt.STUDENT_ROLL, cor.COURSE_TITLE`,
+				bindvars,
+				function (err, result) {
+					if (err) {
+						errorFunctions.dbQueryProblem()(next);
+						doRelease(connection);
+						return;
+					}
+					res.send(result);
+					doRelease(connection);
+				});
+		});
+
+});
+
+router.post('/get/semester', auth, function (req, res, next) {
+
+	// if(errorFunctions.sessionAndDept()(req.body.user.type, next)) return;
+
+	oracledb.getConnection(
+		dbConfig,
+		function (err, connection) {
+			if (err) { console.error(err.message); return; }
+
+			var bindvars = {
+				dn: req.body.departmentAbbr,
+				pg: req.body.program,
+				se: req.body.session,
+			};
+			connection.execute(
+				`select CA.SEMESTER_ID from COURSE_ASSIGN CA, SESSION_ S, PROGRAM P, DEPARTMENT D
+				where CA.SESSION_ID = S.SESSION_ID 
+				AND S.PROGRAM_ID = P.PROGRAM_ID 
+				AND P.DEPARTMENT_ID = D.DEPARTMENT_ID
+				AND S.SESSION_DESC = :se
+				AND P.PROGRAM_ABBR = UPPER(:pg) 
+				AND D.DEPARTMENT_ABBR = UPPER(:dn) ORDER BY CA.SEMESTER_ID DESC`,
 				bindvars,
 				function (err, result) {
 					if (err) {
